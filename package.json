@@ -1,0 +1,14 @@
+{
+  "name": "fundtrail",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FundTrail: offline savings tracker (Android app)",
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/share": "^6.0.0",
+    "@capacitor/local-notifications": "^6.1.0"
+  }
+}

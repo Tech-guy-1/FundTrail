@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FundTrail</title>
+  <meta name="description" content="FundTrail: an offline savings tracker. Your data stays on your phone.">
+  <meta name="theme-color" content="#0f766e">
+  <link rel="icon" type="image/png" href="data:image/png;base64,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">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="FundTrail">
+  <style>
+:root {
+  --bg: #f3f7f6;
+  --card: #ffffff;
+  --text: #12211f;
+  --muted: #5b6e6a;
+  --brand: #0f766e;
+  --on-brand: #ffffff;
+  --line: #d9e4e1;
+  --pos: #15803d;
+  --neg: #b91c1c;
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1614;
+    --card: #15231f;
+    --text: #e7f1ee;
+    --muted: #9ab0aa;
+    --brand: #2dd4bf;
+    --on-brand: #06201c;
+    --line: #25352f;
+    --pos: #4ade80;
+    --neg: #f87171;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+body { overflow: hidden; }
+
+/* One column that always fits a phone: header / scrolling content / footer */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-top: env(safe-area-inset-top);
+  background: var(--bg);
+}
+
+.screen { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.top { flex: none; padding: 14px 16px 8px; font-size: 22px; font-weight: 800; }
+.content { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 4px 16px 20px; -webkit-overflow-scrolling: touch; }
+.foot {
+  flex: none; display: flex; gap: 10px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line); background: var(--bg);
+}
+.foot .btn { flex: 1; }
+
+.loading { padding: 40px 16px; text-align: center; color: var(--muted); }
+
+/* Tabs */
+.tabs {
+  flex: none; display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--card); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab {
+  background: none; border: 0; min-height: 58px; padding: 6px 2px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  font: inherit; font-size: 12px; color: var(--muted);
+}
+.tab .i { font-size: 20px; line-height: 1; }
+.tab.on { color: var(--brand); font-weight: 700; }
+
+/* Cards and rows */
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin: 0 0 12px; }
+.card h2 { margin: 0 0 6px; font-size: 16px; }
+.muted { color: var(--muted); font-size: 14px; }
+.total .big { font-size: 28px; font-weight: 800; word-break: break-word; margin: 2px 0 6px; }
+.row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.row:first-of-type { border-top: 0; }
+.row .grow { flex: 1; min-width: 0; }
+.row .ico { flex: none; font-size: 22px; width: 30px; text-align: center; }
+.ellip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wrap { overflow-wrap: anywhere; }
+.amt { flex: none; max-width: 45%; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+.empty { text-align: center; color: var(--muted); padding: 18px 8px; }
+
+/* Forms */
+label { display: block; margin: 12px 0 4px; font-size: 14px; color: var(--muted); }
+input, select {
+  width: 100%; min-height: 48px; padding: 0 12px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--card); color: var(--text); font: inherit; font-size: 16px;
+}
+.err { min-height: 20px; margin: 8px 0 0; font-size: 14px; color: var(--neg); }
+
+.btn {
+  min-height: 48px; padding: 0 16px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--card); color: var(--text);
+  font: inherit; font-weight: 700;
+}
+.btn.primary { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.btn.danger { color: var(--neg); border-color: var(--neg); }
+.btn.block { width: 100%; margin-top: 6px; }
+.btn.sm { min-height: 40px; padding: 0 12px; font-size: 14px; }
+.btn[disabled] { opacity: .45; }
+
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 4px; }
+.seg button {
+  min-height: 46px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--card); color: var(--text); font: inherit; font-size: 14px; font-weight: 700;
+}
+.seg button.on { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+
+.btns { display: flex; gap: 8px; margin-top: 10px; }
+.btns .btn { flex: 1; }
+.editbox { border-top: 1px solid var(--line); padding: 4px 0 12px; }
+
+/* Onboarding */
+.steps { display: flex; justify-content: space-between; align-items: center; margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 22px; height: 6px; border-radius: 3px; background: var(--line); }
+.dot.on { background: var(--brand); }
+.hero { text-align: center; padding: 8px 0 4px; }
+.hero img { width: 84px; height: 84px; border-radius: 20px; }
+.hero h1 { margin: 12px 0 4px; font-size: 26px; }
+.hero p { margin: 0; color: var(--muted); }
+.how { list-style: none; margin: 14px 0 0; padding: 0; }
+.how li { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.how li:first-child { border-top: 0; }
+.how .n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: var(--on-brand); font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.how b { display: block; }
+.how span { color: var(--muted); font-size: 14px; }
+.badge { display: inline-block; font-size: 12px; color: var(--muted); }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  max-width: min(440px, calc(100vw - 32px));
+  background: #12211f; color: #fff; padding: 10px 14px; border-radius: 10px;
+  font-size: 14px; text-align: center; display: none; z-index: 10;
+}
+.toast.show { display: block; }
+
+@media (max-width: 340px) {
+  .top { font-size: 20px; }
+  .total .big { font-size: 24px; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="app" class="app"><div class="loading">Loading FundTrail…</div></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript>FundTrail needs JavaScript to run.</noscript>
+  <script>
+/* FundTrail: offline savings tracker. No libraries, no network, data kept on the device. */
+(function () {
+  'use strict';
+
+  var DB_NAME = 'fundtrail';
+  var STORE = 'kv';
+  var KEY = 'state';
+  var LS_KEY = 'fundtrail_state_v1';
+  var MAX_ACCOUNTS = 10;
+  var MAX_AMT = 10000000000000; // in tambala (MK 100 billion)
+  var ICON = 'data:image/png;base64,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';
+  var IS_FILE = location.protocol === 'file:';
+
+  var ROLES = [
+    { id: 'expenditure', icon: '🛒', label: 'Expenditures', hint: 'Day-to-day spending and bills.' },
+    { id: 'investment', icon: '📈', label: 'Investments', hint: 'Money you set aside to grow.' },
+    { id: 'emergency', icon: '🛟', label: 'Emergency fund', hint: 'Only for urgent, unexpected needs.' },
+    { id: 'business', icon: '💼', label: 'Business income', hint: 'Money your business brings in.' }
+  ];
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var TYPE_LABEL = { deposit: 'Deposit', withdraw: 'Withdrawal', transfer: 'Transfer' };
+
+  var root = document.getElementById('app');
+  var toastEl = document.getElementById('toast');
+  var state = null;
+  var ui = {
+    tab: 'home',
+    form: { type: 'deposit', acc: '', to: '', amt: '', date: '', note: '' },
+    editId: null,
+    filter: '',
+    shown: 30,
+    persisted: null
+  };
+
+  /* ---------- helpers ---------- */
+
+  function $(sel) { return root.querySelector(sel); }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function p2(n) { return n < 10 ? '0' + n : String(n); }
+
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+  }
+
+  function fmtDate(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    if (!m) return s || '';
+    return parseInt(m[3], 10) + ' ' + MONTHS[parseInt(m[2], 10) - 1] + ' ' + m[1];
+  }
+
+  // Amounts are stored as whole tambala (1 MK = 100 tambala) to avoid rounding errors.
+  function money(n) {
+    var neg = n < 0;
+    n = Math.abs(n);
+    var whole = Math.floor(n / 100);
+    var frac = n % 100;
+    var w = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (neg ? '-' : '') + 'MK ' + w + '.' + (frac < 10 ? '0' : '') + frac;
+  }
+
+  function parseAmount(str) {
+    var s = String(str).replace(/[,\s]/g, '');
+    if (!/^\d+(\.\d{1,2})?$/.test(s)) return null;
+    return Math.round(parseFloat(s) * 100);
+  }
+
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+  function mask(num) {
+    num = String(num || '');
+    return num.length > 4 ? '•••• ' + num.slice(-4) : num;
+  }
+
+  function byId(id) {
+    if (!id) return null;
+    for (var i = 0; i < state.accounts.length; i++) {
+      if (state.accounts[i].id === id) return state.accounts[i];
+    }
+    return null;
+  }
+
+  function nm(a) { return a ? a.name : 'Unknown account'; }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.className = 'toast show';
+    clearTimeout(toast.t);
+    toast.t = setTimeout(function () { toastEl.className = 'toast'; }, 2400);
+  }
+
+  function err(msg) {
+    var e = $('#err');
+    if (e) e.textContent = msg;
+    return false;
+  }
+
+  /* ---------- storage: IndexedDB (+ localStorage mirror) ---------- */
+
+  var dbp = null;
+  function openDb() {
+    if (dbp) return dbp;
+    dbp = new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('IndexedDB unavailable')); return; }
+      var req;
+      try { req = indexedDB.open(DB_NAME, 1); } catch (e) { reject(e); return; }
+      req.onupgradeneeded = function () { req.result.createObjectStore(STORE); };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+    dbp.catch(function () { dbp = null; });
+    return dbp;
+  }
+
+  function idbGet() {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var q = db.transaction(STORE, 'readonly').objectStore(STORE).get(KEY);
+        q.onsuccess = function () { resolve(q.result); };
+        q.onerror = function () { reject(q.error); };
+      });
+    });
+  }
+
+  function idbPut(val) {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var t = db.transaction(STORE, 'readwrite');
+        t.objectStore(STORE).put(val, KEY);
+        t.oncomplete = function () { resolve(); };
+        t.onerror = function () { reject(t.error); };
+        t.onabort = function () { reject(t.error); };
+      });
+    });
+  }
+
+  var saveChain = Promise.resolve();
+  function save() {
+    var snap = JSON.stringify(state);
+    try { localStorage.setItem(LS_KEY, snap); } catch (e) { /* mirror only */ }
+    saveChain = saveChain
+      .then(function () { return idbPut(snap); })
+      .catch(function () { /* the localStorage mirror still holds the data */ });
+    return saveChain;
+  }
+
+  function load() {
+    var p = idbGet().catch(function () { return null; });
+    if (IS_FILE) {
+      // Opened straight from a file: IndexedDB may hang, so do not wait on it for long.
+      p = Promise.race([p, new Promise(function (r) { setTimeout(function () { r(null); }, 2000); })]);
+    }
+    return p.then(function (v) {
+      if (v) { try { return JSON.parse(v); } catch (e) { /* fall through */ } }
+      try {
+        var l = localStorage.getItem(LS_KEY);
+        if (l) return JSON.parse(l);
+      } catch (e) { /* ignore */ }
+      return null;
+    });
+  }
+
+  function requestPersist() {
+    try {
+      if (navigator.storage && navigator.storage.persisted) {
+        navigator.storage.persisted().then(function (p) {
+          if (p) { ui.persisted = true; return; }
+          if (navigator.storage.persist) {
+            navigator.storage.persist().then(function (ok) { ui.persisted = !!ok; });
+          }
+        });
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  function newState() {
+    return { v: 1, onboarded: false, step: 0, accounts: [], roles: {}, tx: [], reminder: { on: true, h: 17, m: 0 } };
+  }
+
+  function validState(o) {
+    if (!o || typeof o !== 'object') return false;
+    if (!Array.isArray(o.accounts) || !Array.isArray(o.tx)) return false;
+    if (!o.roles || typeof o.roles !== 'object') return false;
+    var okA = o.accounts.every(function (a) {
+      return a && typeof a.id === 'string' && typeof a.name === 'string';
+    });
+    var okT = o.tx.every(function (t) {
+      return t && typeof t.id === 'string' && typeof t.acc === 'string' &&
+        ['deposit', 'withdraw', 'transfer'].indexOf(t.type) !== -1 &&
+        isFinite(t.amt) && t.amt > 0 && (t.type !== 'transfer' || typeof t.to === 'string');
+    });
+    return okA && okT;
+  }
+
+  function normalize(o) {
+    delete o.app;
+    delete o.exported;
+    o.v = 1;
+    o.step = o.step | 0;
+    var rm = o.reminder || {};
+    o.reminder = {
+      on: rm.on !== false,
+      h: (rm.h >= 0 && rm.h <= 23) ? (rm.h | 0) : 17,
+      m: (rm.m >= 0 && rm.m <= 59) ? (rm.m | 0) : 0
+    };
+    o.accounts.forEach(function (a) {
+      a.number = String(a.number || '');
+      a.opening = isFinite(a.opening) ? a.opening : 0;
+    });
+    o.tx.forEach(function (t) {
+      t.note = t.note ? String(t.note) : '';
+      t.date = /^\d{4}-\d{2}-\d{2}$/.test(t.date) ? t.date : todayStr();
+      t.ts = t.ts || 0;
+    });
+    var ids = {};
+    o.accounts.forEach(function (a) { ids[a.id] = true; });
+    Object.keys(o.roles).forEach(function (r) { if (!ids[o.roles[r]]) delete o.roles[r]; });
+    var allRoles = ROLES.every(function (r) { return o.roles[r.id]; });
+    o.onboarded = !!o.onboarded && o.accounts.length > 0 && allRoles;
+    if (!o.onboarded) o.step = o.accounts.length ? 2 : (o.step > 1 ? 1 : o.step);
+    return o;
+  }
+
+  /* ---------- money logic ---------- */
+
+  function balances() {
+    var b = {};
+    state.accounts.forEach(function (a) { b[a.id] = a.opening || 0; });
+    state.tx.forEach(function (t) {
+      if (!(t.acc in b)) return;
+      if (t.type === 'deposit') b[t.acc] += t.amt;
+      else if (t.type === 'withdraw') b[t.acc] -= t.amt;
+      else if (t.to in b) { b[t.acc] -= t.amt; b[t.to] += t.amt; }
+    });
+    return b;
+  }
+
+  function sortedTx() {
+    return state.tx.slice().sort(function (x, y) {
+      if (x.date !== y.date) return x.date < y.date ? 1 : -1;
+      return (y.ts || 0) - (x.ts || 0);
+    });
+  }
+
+  function allRolesSet() {
+    return ROLES.every(function (r) { return byId(state.roles[r.id]); });
+  }
+
+  /* ---------- views: onboarding ---------- */
+
+  function steps(n) {
+    var d = '';
+    for (var i = 1; i <= 3; i++) d += '<i class="dot' + (i <= n ? ' on' : '') + '"></i>';
+    return '<div class="steps"><span>Step ' + n + ' of 3</span><span class="dots">' + d + '</span></div>';
+  }
+
+  function viewWelcome() {
+    return '<section class="screen"><div class="top">FundTrail</div><div class="content">' +
+      steps(1) +
+      '<div class="hero"><img src="' + ICON + '" alt="" width="84" height="84">' +
+      '<h1>Welcome to FundTrail</h1><p>Follow your savings across all your bank accounts.</p></div>' +
+      '<div class="card"><ul class="how">' +
+      '<li><div class="n">1</div><div><b>Add your bank accounts</b><span>Enter the name and account number of each one.</span></div></li>' +
+      '<li><div class="n">2</div><div><b>Give each a purpose</b><span>Choose which account is for expenditures, investments, your emergency fund and business income.</span></div></li>' +
+      '<li><div class="n">3</div><div><b>Record your money</b><span>Add deposits, withdrawals and transfers. FundTrail keeps every balance up to date.</span></div></li>' +
+      '</ul></div>' +
+      '<div class="card"><b>Private and offline</b><p class="muted" style="margin:6px 0 0">No login and no internet needed. Everything is saved on this phone only and stays after you restart or switch it off. ' +
+      'FundTrail does not connect to your bank, so you record your own transactions.</p></div>' +
+      '</div><div class="foot"><button class="btn primary" data-action="next">Get started</button></div></section>';
+  }
+
+  function accountForm(btn) {
+    return '<form class="card" data-submit="addAccount" novalidate>' +
+      '<label for="aname">Bank name</label>' +
+      '<input id="aname" maxlength="40" autocomplete="off" placeholder="e.g. National Bank">' +
+      '<label for="anum">Account number</label>' +
+      '<input id="anum" maxlength="30" autocomplete="off" placeholder="e.g. 1001234567">' +
+      '<label for="aopen">Current balance in MK (optional)</label>' +
+      '<input id="aopen" inputmode="decimal" autocomplete="off" placeholder="0.00">' +
+      '<p class="err" id="err"></p>' +
+      '<button class="btn primary block" type="submit">' + btn + '</button></form>';
+  }
+
+  function viewAccountsStep() {
+    var list = state.accounts.map(function (a, i) {
+      return '<div class="row"><div class="grow"><div class="muted">Account ' + (i + 1) + '</div>' +
+        '<div class="ellip"><b>' + esc(a.name) + '</b></div>' +
+        '<div class="muted ellip">' + esc(a.number) + '</div></div>' +
+        '<button class="btn sm danger" data-action="removeAcc" data-id="' + esc(a.id) + '">Remove</button></div>';
+    }).join('');
+    var form = state.accounts.length < MAX_ACCOUNTS ? accountForm('Add account') :
+      '<p class="muted">You have reached the maximum of ' + MAX_ACCOUNTS + ' accounts.</p>';
+    return '<section class="screen"><div class="top">Your bank accounts</div><div class="content">' +
+      steps(2) +
+      '<p class="muted" style="margin-top:0">Add each account you want to track. The first one you add is Account 1, the next is Account 2, and so on.</p>' +
+      form +
+      (list ? '<div class="card"><h2>Added (' + state.accounts.length + ')</h2>' + list + '</div>' : '') +
+      '</div><div class="foot"><button class="btn" data-action="back">Back</button>' +
+      '<button class="btn primary" data-action="next"' + (state.accounts.length ? '' : ' disabled') + '>Next</button></div></section>';
+  }
+
+  function accountOptions(selected, placeholder) {
+    var o = placeholder ? '<option value="">' + placeholder + '</option>' : '';
+    return o + state.accounts.map(function (a) {
+      return '<option value="' + esc(a.id) + '"' + (a.id === selected ? ' selected' : '') + '>' +
+        esc(a.name) + ' (' + esc(mask(a.number)) + ')</option>';
+    }).join('');
+  }
+
+  function roleBlocks() {
+    return ROLES.map(function (r) {
+      return '<label for="role-' + r.id + '">' + r.icon + ' ' + r.label + ' <span class="badge">· ' + esc(r.hint) + '</span></label>' +
+        '<select id="role-' + r.id + '" data-role="' + r.id + '">' +
+        accountOptions(state.roles[r.id], 'Choose account…') + '</select>';
+    }).join('');
+  }
+
+  function viewRolesStep() {
+    return '<section class="screen"><div class="top">What is each account for?</div><div class="content">' +
+      steps(3) +
+      '<p class="muted" style="margin-top:0">Pick one account for each purpose. You can use the same account for more than one purpose, and change this later in Settings.</p>' +
+      '<div class="card">' + roleBlocks() + '</div>' +
+      '</div><div class="foot"><button class="btn" data-action="back">Back</button>' +
+      '<button class="btn primary" data-action="finish"' + (allRolesSet() ? '' : ' disabled') + '>Finish setup</button></div></section>';
+  }
+
+  /* ---------- views: main app ---------- */
+
+  function txRow(t, deletable) {
+    var a = byId(t.acc);
+    var to = t.to ? byId(t.to) : null;
+    var title = t.note ? t.note : TYPE_LABEL[t.type];
+    var where = t.type === 'transfer' ? esc(nm(a)) + ' → ' + esc(nm(to)) : esc(nm(a));
+    var cls = t.type === 'deposit' ? 'pos' : (t.type === 'withdraw' ? 'neg' : '');
+    var sign = t.type === 'deposit' ? '+' : (t.type === 'withdraw' ? '−' : '');
+    return '<div class="row"><div class="grow"><div class="wrap"><b>' + esc(title) + '</b></div>' +
+      '<div class="muted wrap">' + fmtDate(t.date) + ' · ' + where + '</div></div>' +
+      '<div class="amt ' + cls + '">' + sign + money(t.amt) + '</div>' +
+      (deletable ? '<button class="btn sm" aria-label="Delete transaction" data-action="delTx" data-id="' + esc(t.id) + '">✕</button>' : '') +
+      '</div>';
+  }
+
+  function viewHome() {
+    var b = balances();
+    var total = 0;
+    state.accounts.forEach(function (a) { total += b[a.id]; });
+    var ym = todayStr().slice(0, 7), inn = 0, out = 0;
+    state.tx.forEach(function (t) {
+      if (String(t.date).slice(0, 7) !== ym) return;
+      if (t.type === 'deposit') inn += t.amt;
+      else if (t.type === 'withdraw') out += t.amt;
+    });
+
+    var purposes = ROLES.map(function (r) {
+      var a = byId(state.roles[r.id]);
+      return '<div class="row"><div class="ico">' + r.icon + '</div><div class="grow">' +
+        '<div class="ellip"><b>' + r.label + '</b></div>' +
+        '<div class="muted ellip">' + (a ? esc(a.name) : 'Not assigned') + '</div></div>' +
+        '<div class="amt">' + (a ? money(b[a.id]) : '—') + '</div></div>';
+    }).join('');
+
+    var accs = state.accounts.map(function (a) {
+      return '<div class="row"><div class="grow"><div class="ellip"><b>' + esc(a.name) + '</b></div>' +
+        '<div class="muted ellip">' + esc(mask(a.number)) + '</div></div>' +
+        '<div class="amt">' + money(b[a.id]) + '</div></div>';
+    }).join('');
+
+    var recent = sortedTx().slice(0, 5);
+    var recentHtml = recent.length ?
+      recent.map(function (t) { return txRow(t, false); }).join('') :
+      '<div class="empty">No transactions yet. Tap “Add” to record your first one.</div>';
+
+    return '<div class="card total"><div class="muted">Total savings</div>' +
+      '<div class="big">' + money(total) + '</div>' +
+      '<div class="muted wrap">This month: <span class="pos">+' + money(inn) + '</span> in · <span class="neg">−' + money(out) + '</span> out</div></div>' +
+      '<div class="card"><h2>By purpose</h2>' + purposes + '</div>' +
+      '<div class="card"><h2>Accounts</h2>' + accs + '</div>' +
+      '<div class="card"><h2>Recent activity</h2>' + recentHtml + '</div>';
+  }
+
+  function viewAdd() {
+    var f = ui.form, accs = state.accounts;
+    if (!byId(f.acc)) f.acc = accs[0].id;
+    if (f.type === 'transfer' && (!byId(f.to) || f.to === f.acc)) {
+      var other = accs.filter(function (a) { return a.id !== f.acc; })[0];
+      f.to = other ? other.id : '';
+    }
+    if (!f.date) f.date = todayStr();
+
+    var seg = ['deposit', 'withdraw', 'transfer'].map(function (t) {
+      return '<button type="button" class="' + (f.type === t ? 'on' : '') + '" data-action="ttype" data-type="' + t + '">' + TYPE_LABEL[t] + '</button>';
+    }).join('');
+
+    var toBlock = '';
+    if (f.type === 'transfer') {
+      toBlock = '<label for="f-to">To account</label><select id="f-to">' + accountOptions(f.to) + '</select>' +
+        (accs.length < 2 ? '<p class="muted">Add a second account in Settings to make transfers.</p>' : '');
+    }
+
+    return '<form class="card" data-submit="saveTx" novalidate>' +
+      '<div class="seg">' + seg + '</div>' +
+      '<label for="f-acc">' + (f.type === 'deposit' ? 'Into account' : 'From account') + '</label>' +
+      '<select id="f-acc">' + accountOptions(f.acc) + '</select>' +
+      toBlock +
+      '<label for="f-amt">Amount (MK)</label>' +
+      '<input id="f-amt" inputmode="decimal" autocomplete="off" placeholder="0.00" value="' + esc(f.amt) + '">' +
+      '<label for="f-date">Date</label>' +
+      '<input id="f-date" type="date" value="' + esc(f.date) + '">' +
+      '<label for="f-note">Note (optional)</label>' +
+      '<input id="f-note" maxlength="60" autocomplete="off" placeholder="e.g. Salary, school fees" value="' + esc(f.note) + '">' +
+      '<p class="err" id="err"></p>' +
+      '<button class="btn primary block" type="submit">Save transaction</button></form>';
+  }
+
+  function viewHistory() {
+    var list = sortedTx().filter(function (t) {
+      return !ui.filter || t.acc === ui.filter || t.to === ui.filter;
+    });
+    var shown = list.slice(0, ui.shown);
+    var filter = '<label for="hfilter" style="margin-top:0">Show</label><select id="hfilter">' +
+      '<option value="">All accounts</option>' + accountOptions(ui.filter) + '</select>';
+    var rows = shown.length ?
+      shown.map(function (t) { return txRow(t, true); }).join('') :
+      '<div class="empty">Nothing here yet.</div>';
+    var more = list.length > shown.length ?
+      '<button class="btn block" data-action="more">Show more</button>' : '';
+    return '<div class="card">' + filter + '</div><div class="card">' + rows + more + '</div>';
+  }
+
+  function viewSettings() {
+    var accRows = state.accounts.map(function (a) {
+      if (ui.editId === a.id) {
+        return '<form class="editbox" data-submit="saveEdit" data-id="' + esc(a.id) + '" novalidate>' +
+          '<label for="ename">Bank name</label><input id="ename" maxlength="40" autocomplete="off" value="' + esc(a.name) + '">' +
+          '<label for="enum">Account number</label><input id="enum" maxlength="30" autocomplete="off" value="' + esc(a.number) + '">' +
+          '<p class="err" id="err"></p>' +
+          '<div class="btns"><button class="btn primary" type="submit">Save</button>' +
+          '<button class="btn" type="button" data-action="cancelEdit">Cancel</button></div>' +
+          '<div class="btns"><button class="btn danger" type="button" data-action="deleteAcc" data-id="' + esc(a.id) + '">Delete account</button></div></form>';
+      }
+      return '<div class="row"><div class="grow"><div class="ellip"><b>' + esc(a.name) + '</b></div>' +
+        '<div class="muted ellip">' + esc(a.number) + '</div></div>' +
+        '<button class="btn sm" data-action="editAcc" data-id="' + esc(a.id) + '">Edit</button></div>';
+    }).join('');
+
+    var addForm = state.accounts.length < MAX_ACCOUNTS ?
+      '<div class="card"><h2>Add another account</h2>' + accountForm('Add account').replace('<form class="card"', '<form') + '</div>' : '';
+
+    var protect = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ? 'Stored inside this app on your phone. It is removed only if you clear the app’s data or uninstall it. Export a backup now and then.' : IS_FILE ? 'Not protected. You opened FundTrail as a plain file, so the browser may not keep your data. Host it on GitHub Pages and install it, and export backups often.' :
+      ui.persisted === true ? 'On: the browser will not clear your data to free up space.' :
+      'Standard. Installing FundTrail to your home screen helps protect your data. Make a backup now and then.';
+
+    return '<div class="card"><h2>Purposes</h2>' + roleBlocks() + '</div>' +
+      '<div class="card"><h2>Accounts</h2>' + accRows + '</div>' +
+      addForm +
+      reminderCard() +
+      '<div class="card"><h2>Backup</h2>' +
+      '<p class="muted" style="margin-top:0">Your data lives only on this phone. Save a backup file so you can restore it if you ever clear the app’s data or change phones.</p>' +
+      '<button class="btn block" data-action="export">Export backup</button>' +
+      '<button class="btn block" data-action="import">Import backup</button>' +
+      '<input type="file" id="importfile" accept=".json,application/json" hidden>' +
+      '<p class="muted" style="margin-bottom:0">Storage protection: ' + protect + '</p></div>' +
+      '<div class="card"><h2>Erase everything</h2>' +
+      '<p class="muted" style="margin-top:0">Deletes all accounts and transactions from this phone.</p>' +
+      '<button class="btn danger block" data-action="reset">Erase all data</button></div>' +
+      '<p class="muted" style="text-align:center">FundTrail 1.0 · works offline · amounts in Malawian kwacha (MK)</p>';
+  }
+
+  function viewMain() {
+    var titles = { home: 'FundTrail', add: 'Add transaction', history: 'History', settings: 'Settings' };
+    var body = ui.tab === 'add' ? viewAdd() : ui.tab === 'history' ? viewHistory() :
+      ui.tab === 'settings' ? viewSettings() : viewHome();
+    var tabs = [['home', '🏠', 'Home'], ['add', '➕', 'Add'], ['history', '🧾', 'History'], ['settings', '⚙️', 'Settings']]
+      .map(function (t) {
+        return '<button class="tab' + (ui.tab === t[0] ? ' on' : '') + '" data-action="tab" data-tab="' + t[0] + '">' +
+          '<span class="i">' + t[1] + '</span>' + t[2] + '</button>';
+      }).join('');
+    return '<section class="screen"><div class="top">' + titles[ui.tab] + '</div>' +
+      '<div class="content">' + body + '</div><nav class="tabs">' + tabs + '</nav></section>';
+  }
+
+  function render(keepScroll) {
+    var old = root.querySelector('.content');
+    var st = keepScroll && old ? old.scrollTop : 0;
+    var html;
+    if (!state.onboarded) {
+      html = state.step === 1 ? viewAccountsStep() : state.step >= 2 ? viewRolesStep() : viewWelcome();
+    } else {
+      html = viewMain();
+    }
+    root.innerHTML = html;
+    var c = root.querySelector('.content');
+    if (c && st) c.scrollTop = st;
+  }
+
+  /* ---------- actions ---------- */
+
+  function capture() {
+    var map = { acc: '#f-acc', to: '#f-to', amt: '#f-amt', date: '#f-date', note: '#f-note' };
+    Object.keys(map).forEach(function (k) {
+      var el = $(map[k]);
+      if (el) ui.form[k] = el.value;
+    });
+  }
+
+  function addAccount() {
+    var name = $('#aname').value.trim();
+    var num = $('#anum').value.trim();
+    var os = $('#aopen').value.trim();
+    if (!name) return err('Enter the bank name.');
+    if (!num) return err('Enter the account number.');
+    var open = 0;
+    if (os) {
+      open = parseAmount(os);
+      if (open === null || open > MAX_AMT) return err('Balance must be a number like 150000 or 1200.50.');
+    }
+    if (state.accounts.length >= MAX_ACCOUNTS) return err('You can add up to ' + MAX_ACCOUNTS + ' accounts.');
+    var dup = state.accounts.some(function (a) {
+      return a.number === num && a.name.toLowerCase() === name.toLowerCase();
+    });
+    if (dup) return err('That account is already added.');
+    state.accounts.push({ id: uid(), name: name, number: num, opening: open });
+    save();
+    render(true);
+    toast('Account added');
+  }
+
+  function saveEdit(id) {
+    var a = byId(id);
+    if (!a) return;
+    var name = $('#ename').value.trim();
+    var num = $('#enum').value.trim();
+    if (!name) return err('Enter the bank name.');
+    if (!num) return err('Enter the account number.');
+    a.name = name;
+    a.number = num;
+    ui.editId = null;
+    save();
+    render(true);
+    toast('Account updated');
+  }
+
+  function removeAccount(id) {
+    state.accounts = state.accounts.filter(function (a) { return a.id !== id; });
+    Object.keys(state.roles).forEach(function (r) { if (state.roles[r] === id) delete state.roles[r]; });
+  }
+
+  function deleteAccount(id) {
+    var used = state.tx.some(function (t) { return t.acc === id || t.to === id; });
+    var assigned = Object.keys(state.roles).some(function (r) { return state.roles[r] === id; });
+    if (state.accounts.length <= 1) return toast('You need at least one account.');
+    if (used) return toast('This account has transactions, so it cannot be deleted.');
+    if (assigned) return toast('Give its purpose to another account first.');
+    if (!confirm('Delete this account?')) return;
+    removeAccount(id);
+    ui.editId = null;
+    save();
+    render(true);
+    toast('Account deleted');
+  }
+
+  function saveTx() {
+    capture();
+    var f = ui.form;
+    var amt = parseAmount(f.amt);
+    if (amt === null || amt <= 0) return err('Enter a valid amount, like 25000 or 1500.50.');
+    if (amt > MAX_AMT) return err('That amount is too large.');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(f.date)) return err('Choose a date.');
+    var from = byId(f.acc);
+    if (!from) return err('Choose an account.');
+    if (f.type === 'transfer') {
+      if (!byId(f.to)) return err('Choose the account to transfer to.');
+      if (f.to === f.acc) return err('Choose two different accounts.');
+    }
+    if (f.type !== 'deposit') {
+      var bal = balances()[f.acc];
+      if (bal < amt) return err('Not enough money in ' + from.name + ' (' + money(bal) + ').');
+    }
+    var t = { id: uid(), type: f.type, acc: f.acc, amt: amt, note: f.note.trim().slice(0, 60), date: f.date, ts: Date.now() };
+    if (f.type === 'transfer') t.to = f.to;
+    state.tx.push(t);
+    f.amt = '';
+    f.note = '';
+    ui.tab = 'home';
+    save();
+    render(false);
+    toast('Saved');
+  }
+
+  function exportData() {
+    var out = { app: 'FundTrail', exported: new Date().toISOString() };
+    Object.keys(state).forEach(function (k) { out[k] = state[k]; });
+    var cap = window.Capacitor;
+    if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Filesystem && cap.Plugins.Share) {
+      var fname = 'fundtrail-backup-' + todayStr() + '.json';
+      cap.Plugins.Filesystem.writeFile({ path: fname, data: JSON.stringify(out, null, 2), directory: 'CACHE', encoding: 'utf8' })
+        .then(function (r) {
+          return cap.Plugins.Share.share({ title: 'FundTrail backup', url: r.uri, dialogTitle: 'Save or send your backup' });
+        })
+        .catch(function (e) {
+          if (!/cancel/i.test(String(e && e.message))) toast('Could not create the backup file.');
+        });
+      return;
+    }
+    var blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'fundtrail-backup-' + todayStr() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    toast('Backup file saved');
+  }
+
+  function importData(input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > 5000000) { input.value = ''; return toast('That file is too large.'); }
+    var rd = new FileReader();
+    rd.onload = function () {
+      var o = null;
+      try { o = JSON.parse(rd.result); } catch (e) { o = null; }
+      input.value = '';
+      if (!validState(o)) { toast('That is not a valid FundTrail backup.'); return; }
+      if (!confirm('Replace all current data with this backup?')) return;
+      state = normalize(o);
+      ui.tab = 'home';
+      ui.editId = null;
+      save();
+      render(false);
+      remApply(false);
+      toast('Backup restored');
+    };
+    rd.onerror = function () { toast('Could not read that file.'); };
+    rd.readAsText(file);
+  }
+
+  function resetAll() {
+    if (!confirm('Erase ALL FundTrail data on this phone? This cannot be undone.')) return;
+    if (!confirm('Are you sure? Export a backup first if you might need this data.')) return;
+    state = newState();
+    ui.tab = 'home';
+    ui.editId = null;
+    ui.filter = '';
+    ui.form = { type: 'deposit', acc: '', to: '', amt: '', date: todayStr(), note: '' };
+    save();
+    render(false);
+  }
+
+  /* ---------- daily reminder (native Android only) ---------- */
+
+  var REM_ID = 1701;
+  var REM_TEST_ID = 1702;
+  var REM_CHANNEL = 'daily-reminder';
+  var REM_TITLE = 'FundTrail';
+  var REM_BODY = 'Time to record today’s expenses and transactions.';
+
+  function lnPlugin() {
+    var c = window.Capacitor;
+    if (c && c.isNativePlatform && c.isNativePlatform() && c.Plugins && c.Plugins.LocalNotifications) {
+      return c.Plugins.LocalNotifications;
+    }
+    return null;
+  }
+
+  function remTime() { return p2(state.reminder.h) + ':' + p2(state.reminder.m); }
+
+  function remEnsurePermission(ln, ask) {
+    return ln.checkPermissions().then(function (p) {
+      if (p.display === 'granted') return true;
+      if (!ask) return false;
+      return ln.requestPermissions().then(function (q) { return q.display === 'granted'; });
+    });
+  }
+
+  function remCheckExact(ln) {
+    if (!ln.checkExactNotificationSetting) return Promise.resolve();
+    return ln.checkExactNotificationSetting().then(function (r) {
+      ui.remExact = r && r.exact_alarm ? r.exact_alarm : 'granted';
+    }).catch(function () { ui.remExact = 'granted'; });
+  }
+
+  // Schedules (or cancels) the repeating daily alarm. Android keeps it, restores it after a restart,
+  // and fires it even when FundTrail is closed.
+  function remApply(ask) {
+    var ln = lnPlugin();
+    if (!ln) return Promise.resolve();
+    var r = state.reminder;
+    if (!r.on) {
+      ui.remStatus = 'off';
+      return ln.cancel({ notifications: [{ id: REM_ID }] }).catch(function () {});
+    }
+    return remEnsurePermission(ln, ask).then(function (ok) {
+      if (!ok) { ui.remStatus = 'denied'; return; }
+      return ln.createChannel({
+        id: REM_CHANNEL, name: 'Daily reminder', description: 'Reminds you to record the day’s transactions',
+        importance: 4, visibility: 1
+      }).catch(function () {})
+        .then(function () { return ln.cancel({ notifications: [{ id: REM_ID }] }); })
+        .then(function () {
+          return ln.schedule({ notifications: [{
+            id: REM_ID, title: REM_TITLE, body: REM_BODY, channelId: REM_CHANNEL,
+            schedule: { on: { hour: r.h, minute: r.m }, allowWhileIdle: true }
+          }] });
+        })
+        .then(function () { ui.remStatus = 'on'; return remCheckExact(ln); });
+    }).catch(function () { ui.remStatus = 'error'; });
+  }
+
+  function remTest() {
+    var ln = lnPlugin();
+    if (!ln) return;
+    remEnsurePermission(ln, true).then(function (ok) {
+      if (!ok) { ui.remStatus = 'denied'; render(true); return; }
+      return ln.createChannel({
+        id: REM_CHANNEL, name: 'Daily reminder', description: 'Reminds you to record the day’s transactions',
+        importance: 4, visibility: 1
+      }).catch(function () {}).then(function () {
+        return ln.schedule({ notifications: [{
+          id: REM_TEST_ID, title: REM_TITLE, body: REM_BODY, channelId: REM_CHANNEL,
+          schedule: { at: new Date(Date.now() + 5000), allowWhileIdle: true }
+        }] });
+      }).then(function () { toast('Test sent. It appears in about 5 seconds. You can close the app to try it.'); });
+    }).catch(function () { toast('Could not send a test notification.'); });
+  }
+
+  function remExactSettings() {
+    var ln = lnPlugin();
+    if (ln && ln.changeExactNotificationSetting) {
+      ln.changeExactNotificationSetting().then(function () { return remApply(false); })
+        .then(function () { render(true); }).catch(function () {});
+    }
+  }
+
+  function reminderCard() {
+    if (!lnPlugin()) return '';
+    var r = state.reminder, st = ui.remStatus, msg = '';
+    if (!r.on) msg = 'The reminder is off.';
+    else if (st === 'denied') msg = 'Notifications are blocked. Turn them on for FundTrail in your phone’s Settings → Apps → FundTrail → Notifications, then come back here.';
+    else if (st === 'error') msg = 'Could not set the reminder. Try changing the time or turning it off and on.';
+    else msg = 'FundTrail will remind you at ' + remTime() + ' every day, even when the app is closed.';
+    var exact = (r.on && st === 'on' && ui.remExact === 'denied') ?
+      '<p class="muted">For the reminder to arrive exactly on time, allow exact alarms for FundTrail.</p>' +
+      '<button class="btn block" data-action="remExact">Allow exact timing</button>' : '';
+    return '<div class="card"><h2>Daily reminder</h2>' +
+      '<label for="rem-on" style="margin-top:0">Remind me to record my transactions</label>' +
+      '<select id="rem-on"><option value="1"' + (r.on ? ' selected' : '') + '>On</option>' +
+      '<option value="0"' + (r.on ? '' : ' selected') + '>Off</option></select>' +
+      '<label for="rem-time">Time</label>' +
+      '<input id="rem-time" type="time" value="' + remTime() + '">' +
+      '<p class="muted wrap">' + msg + '</p>' + exact +
+      '<button class="btn block" data-action="remTest">Send a test notification</button>' +
+      '<p class="muted" style="margin-bottom:0">If reminders do not arrive on your phone, open Settings → Apps → FundTrail → Battery and choose Unrestricted. Some brands (Tecno, Infinix, Xiaomi, Huawei) stop background apps otherwise.</p></div>';
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState !== 'visible' || !state || !state.onboarded || !lnPlugin()) return;
+    var before = ui.remStatus + '|' + ui.remExact;
+    remApply(false).then(function () {
+      if (ui.tab === 'settings' && before !== ui.remStatus + '|' + ui.remExact) render(true);
+    });
+  });
+
+  /* ---------- events ---------- */
+
+  root.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-action]');
+    if (!el) return;
+    if (state.onboarded && ui.tab === 'add') capture();
+    var act = el.getAttribute('data-action');
+    var id = el.getAttribute('data-id');
+
+    switch (act) {
+      case 'next':
+        if (state.step === 1 && !state.accounts.length) return;
+        if (state.step === 1 && state.accounts.length === 1) {
+          ROLES.forEach(function (r) { state.roles[r.id] = state.accounts[0].id; });
+        }
+        state.step = Math.min(2, (state.step || 0) + 1);
+        save(); render(false);
+        break;
+      case 'back':
+        state.step = Math.max(0, (state.step || 0) - 1);
+        save(); render(false);
+        break;
+      case 'removeAcc':
+        removeAccount(id); save(); render(true);
+        break;
+      case 'finish':
+        if (!allRolesSet()) return;
+        state.onboarded = true;
+        ui.tab = 'home';
+        save(); requestPersist(); render(false); remApply(true).then(function () { if (ui.tab === 'settings') render(true); });
+        break;
+      case 'tab':
+        ui.tab = el.getAttribute('data-tab');
+        ui.editId = null;
+        ui.shown = 30;
+        render(false);
+        break;
+      case 'ttype':
+        ui.form.type = el.getAttribute('data-type');
+        render(true);
+        break;
+      case 'more':
+        ui.shown += 30; render(true);
+        break;
+      case 'delTx':
+        if (!confirm('Delete this transaction?')) return;
+        state.tx = state.tx.filter(function (t) { return t.id !== id; });
+        save(); render(true); toast('Deleted');
+        break;
+      case 'editAcc':
+        ui.editId = id; render(true);
+        break;
+      case 'cancelEdit':
+        ui.editId = null; render(true);
+        break;
+      case 'deleteAcc':
+        deleteAccount(id);
+        break;
+      case 'export':
+        exportData();
+        break;
+      case 'import':
+        var inp = $('#importfile');
+        if (inp) inp.click();
+        break;
+      case 'reset':
+        resetAll();
+        break;
+      case 'remTest':
+        remTest();
+        break;
+      case 'remExact':
+        remExactSettings();
+        break;
+    }
+  });
+
+  root.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var f = e.target.closest('[data-submit]');
+    if (!f) return;
+    var what = f.getAttribute('data-submit');
+    if (what === 'addAccount') addAccount();
+    else if (what === 'saveTx') saveTx();
+    else if (what === 'saveEdit') saveEdit(f.getAttribute('data-id'));
+  });
+
+  root.addEventListener('change', function (e) {
+    var t = e.target;
+    var role = t.getAttribute && t.getAttribute('data-role');
+    if (role) {
+      if (t.value) state.roles[role] = t.value; else delete state.roles[role];
+      save();
+      if (!state.onboarded) render(true); else toast('Saved');
+    } else if (t.id === 'hfilter') {
+      ui.filter = t.value;
+      ui.shown = 30;
+      render(true);
+    } else if (t.id === 'importfile') {
+      importData(t);
+    } else if (t.id === 'rem-on') {
+      state.reminder.on = t.value === '1';
+      save();
+      remApply(true).then(function () { render(true); });
+    } else if (t.id === 'rem-time') {
+      var tm = /^(\d{1,2}):(\d{2})$/.exec(t.value || '');
+      if (tm && +tm[1] < 24 && +tm[2] < 60) {
+        state.reminder.h = +tm[1];
+        state.reminder.m = +tm[2];
+        save();
+        remApply(true).then(function () { render(true); toast('Reminder time saved'); });
+      }
+    }
+  });
+
+  /* ---------- start ---------- */
+
+  function init() {
+    ui.form.date = todayStr();
+    load().then(function (s) {
+      state = s && validState(s) ? normalize(s) : newState();
+      render(false);
+      requestPersist();
+      if (state.onboarded) remApply(false);
+    }).catch(function () {
+      state = newState();
+      render(false);
+    });
+    if (false) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function () { /* offline cache is optional */ });
+      });
+    }
+  }
+
+  init();
+})();
+
+  </script>
+</body>
+</html>
