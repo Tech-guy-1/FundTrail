@@ -218,10 +218,12 @@ input, select {
   var IS_FILE = location.protocol === 'file:';
 
   var ROLES = [
-    { id: 'expenditure', icon: 'expenditure', label: 'Expenditures', hint: 'Day-to-day spending and bills.' },
-    { id: 'investment', icon: 'investment', label: 'Investments', hint: 'Money you set aside to grow.' },
-    { id: 'emergency', icon: 'emergency', label: 'Emergency fund', hint: 'Only for urgent, unexpected needs.' },
-    { id: 'business', icon: 'business', label: 'Business income', hint: 'Money your business brings in.' }
+    { id: 'expenditure', icon: 'expenditure', label: 'Bills and utilities', hint: 'Rent, electricity, water, airtime and other bills.', tone: 'neg' },
+    { id: 'investment', icon: 'investment', label: 'Investments', hint: 'Money you set aside to grow.', tone: 'pos' },
+    { id: 'emergency', icon: 'emergency', label: 'Emergency fund', hint: 'Only for urgent, unexpected needs.', tone: 'pos' },
+    { id: 'business', icon: 'business', label: 'Business income', hint: 'Money your business brings in.', tone: 'pos' },
+    { id: 'flexible', icon: 'flexible', label: 'Flexible reserve', hint: 'Spare money you can use where it is needed.', tone: 'pos' },
+    { id: 'personal', icon: 'personal', label: 'Personal development', hint: 'Courses, books and growing your skills.', tone: 'neg' }
   ];
 
   // Line icons (inline SVG, drawn in the current text colour).
@@ -233,6 +235,8 @@ input, select {
     expenditure: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10.5h18M7 15h3"/>',
     investment: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
     emergency: '<path d="M12 3l8 3v6c0 4.4-3.2 7.7-8 9-4.8-1.3-8-4.6-8-9V6z"/><path d="M12 9v6M9 12h6"/>',
+    flexible: '<path d="M4 8h13a3 3 0 0 1 0 6H4"/><path d="M4 8v10h14"/><path d="M14 11h.01"/>',
+    personal: '<path d="M12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/>',
     business: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 13h18"/>',
     trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>'
@@ -468,6 +472,34 @@ input, select {
     return b;
   }
 
+  // Balance of every account as at the end of a month ('all' = today).
+  function balancesAsOf(ym) {
+    var b = {};
+    state.accounts.forEach(function (a) { b[a.id] = a.opening || 0; });
+    state.tx.forEach(function (t) {
+      if (ym !== 'all' && String(t.date).slice(0, 7) > ym) return;
+      if (!(t.acc in b)) return;
+      if (t.type === 'deposit') b[t.acc] += t.amt;
+      else if (t.type === 'withdraw') b[t.acc] -= t.amt;
+      else if (t.to in b) { b[t.acc] -= t.amt; b[t.to] += t.amt; }
+    });
+    return b;
+  }
+
+  // Assets = money in accounts that hold investments, emergency fund, business income,
+  // flexible reserve (or have no purpose). Liabilities = money in accounts used only for
+  // bills and utilities / personal development, since that money is going out.
+  function netWorth(ym) {
+    var b = balancesAsOf(ym), assets = 0, liab = 0;
+    state.accounts.forEach(function (a) {
+      var tones = ROLES.filter(function (r) { return state.roles[r.id] === a.id; })
+        .map(function (r) { return r.tone; });
+      var onlyOut = tones.length > 0 && tones.every(function (t) { return t === 'neg'; });
+      if (onlyOut) liab += b[a.id]; else assets += b[a.id];
+    });
+    return { assets: assets, liab: liab, net: assets - liab };
+  }
+
   function sortedTx() {
     return state.tx.slice().sort(function (x, y) {
       if (x.date !== y.date) return x.date < y.date ? 1 : -1;
@@ -495,7 +527,7 @@ input, select {
       '<p class="made">Made by Vision Grid Technologies</p></div>' +
       '<div class="card"><ul class="how">' +
       '<li><div class="n">1</div><div><b>Add your bank accounts</b><span>Enter the name and account number of each one, or skip this and add them later.</span></div></li>' +
-      '<li><div class="n">2</div><div><b>Give each a purpose</b><span>Choose which account is for expenditures, investments, your emergency fund and business income.</span></div></li>' +
+      '<li><div class="n">2</div><div><b>Give each a purpose</b><span>Choose which account is for bills and utilities, investments, your emergency fund, business income, a flexible reserve and personal development.</span></div></li>' +
       '<li><div class="n">3</div><div><b>Record your money</b><span>Add deposits, withdrawals and transfers. FundTrail keeps every balance up to date.</span></div></li>' +
       '</ul></div>' +
       '<div class="card"><b>Private and offline</b><p class="muted" style="margin:6px 0 0">FundTrail works offline, and your data is kept on your phone.</p></div>' +
@@ -589,7 +621,7 @@ input, select {
       return '<div class="row"><div class="ico">' + ic(r.icon, 20) + '</div><div class="grow">' +
         '<div class="wrap"><b>' + r.label + '</b></div>' +
         '<div class="muted ellip">' + (a ? esc(a.name) : 'Not assigned') + '</div></div>' +
-        '<div class="amt">' + (a ? money(b[a.id]) : '—') + '</div></div>';
+        '<div class="amt ' + (a ? r.tone : '') + '">' + (a ? money(b[a.id]) : '—') + '</div></div>';
     }).join('');
 
     var recent = sortedTx().slice(0, 5);
@@ -686,6 +718,12 @@ input, select {
     var summary = '<div class="card total"><div class="muted">Ending balance' + (ui.month === 'all' ? '' : ' · ' + esc(monthLabel(ui.month))) + '</div>' +
       '<div class="big ' + cls + '">' + money(net) + '</div>' +
       '<div class="muted"><span class="nw"><span class="pos">+' + money(inn) + '</span> in</span> · <span class="nw"><span class="neg">−' + money(out) + '</span> out</span></div></div>';
+
+    var nwv = netWorth(ui.month);
+    var nwCls = nwv.net < 0 ? 'neg' : (nwv.net > 0 ? 'pos' : '');
+    summary += '<div class="card total"><div class="muted">Net worth' + (ui.month === 'all' ? '' : ' · end of ' + esc(monthLabel(ui.month))) + '</div>' +
+      '<div class="big ' + nwCls + '">' + money(nwv.net) + '</div>' +
+      '<div class="muted"><span class="nw">Assets <span class="pos">' + money(nwv.assets) + '</span></span> − <span class="nw">Liabilities <span class="neg">' + money(nwv.liab) + '</span></span></div></div>';
 
     var shown = list.slice(0, ui.shown);
     var filter = '<label for="hmonth" style="margin-top:0">Month</label><select id="hmonth">' + monthOptions(ui.month) + '</select>' +
