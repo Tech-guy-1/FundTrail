@@ -255,6 +255,7 @@ input, select {
     form: { type: 'deposit', acc: '', to: '', amt: '', date: '', note: '' },
     editId: null,
     filter: '',
+    month: '',
     shown: 30,
     persisted: null
   };
@@ -448,8 +449,7 @@ input, select {
     var ids = {};
     o.accounts.forEach(function (a) { ids[a.id] = true; });
     Object.keys(o.roles).forEach(function (r) { if (!ids[o.roles[r]]) delete o.roles[r]; });
-    var allRoles = ROLES.every(function (r) { return o.roles[r.id]; });
-    o.onboarded = !!o.onboarded && o.accounts.length > 0 && allRoles;
+    o.onboarded = !!o.onboarded;
     if (!o.onboarded) o.step = o.accounts.length ? 2 : (o.step > 1 ? 1 : o.step);
     return o;
   }
@@ -494,12 +494,11 @@ input, select {
       '<h1>Welcome to FundTrail</h1><p>Follow your savings across all your bank accounts.</p>' +
       '<p class="made">Made by Vision Grid Technologies</p></div>' +
       '<div class="card"><ul class="how">' +
-      '<li><div class="n">1</div><div><b>Add your bank accounts</b><span>Enter the name and account number of each one.</span></div></li>' +
+      '<li><div class="n">1</div><div><b>Add your bank accounts</b><span>Enter the name and account number of each one, or skip this and add them later.</span></div></li>' +
       '<li><div class="n">2</div><div><b>Give each a purpose</b><span>Choose which account is for expenditures, investments, your emergency fund and business income.</span></div></li>' +
       '<li><div class="n">3</div><div><b>Record your money</b><span>Add deposits, withdrawals and transfers. FundTrail keeps every balance up to date.</span></div></li>' +
       '</ul></div>' +
-      '<div class="card"><b>Private and offline</b><p class="muted" style="margin:6px 0 0">No login and no internet needed. Everything is saved on this phone only and stays after you restart or switch it off. ' +
-      'FundTrail does not connect to your bank, so you record your own transactions.</p></div>' +
+      '<div class="card"><b>Private and offline</b><p class="muted" style="margin:6px 0 0">FundTrail works offline, and your data is kept on your phone.</p></div>' +
       '</div><div class="foot"><button class="btn primary" data-action="next">Get started</button></div></section>';
   }
 
@@ -526,11 +525,11 @@ input, select {
       '<p class="muted">You have reached the maximum of ' + MAX_ACCOUNTS + ' accounts.</p>';
     return '<section class="screen"><div class="top">Your bank accounts</div><div class="content">' +
       steps(2) +
-      '<p class="muted" style="margin-top:0">Add each account you want to track. The first one you add is Account 1, the next is Account 2, and so on.</p>' +
+      '<p class="muted" style="margin-top:0">Add each account you want to track. The first one you add is Account 1, the next is Account 2, and so on. You can also skip this step and add accounts later in Settings.</p>' +
       form +
       (list ? '<div class="card"><h2>Added (' + state.accounts.length + ')</h2>' + list + '</div>' : '') +
       '</div><div class="foot"><button class="btn" data-action="back">Back</button>' +
-      '<button class="btn primary" data-action="next"' + (state.accounts.length ? '' : ' disabled') + '>Next</button></div></section>';
+      '<button class="btn primary" data-action="next">' + (state.accounts.length ? 'Next' : 'Skip for now') + '</button></div></section>';
   }
 
   function accountOptions(selected, placeholder) {
@@ -598,7 +597,10 @@ input, select {
       recent.map(function (t) { return txRow(t, false); }).join('') :
       '<div class="empty">No transactions yet. Tap “Add” to record your first one.</div>';
 
-    return '<div class="card total"><div class="muted">Total balance</div>' +
+    var noAcc = state.accounts.length ? '' :
+      '<div class="card"><b>No bank accounts yet</b><p class="muted" style="margin:6px 0 0">Add your first account to start recording transactions.</p>' +
+      '<button class="btn primary block" data-action="tab" data-tab="settings">Add an account</button></div>';
+    return noAcc + '<div class="card total"><div class="muted">Total balance</div>' +
       '<div class="big">' + money(total) + '</div>' +
       '<div class="muted">This month: <span class="nw"><span class="pos">+' + money(inn) + '</span> in</span> · <span class="nw"><span class="neg">−' + money(out) + '</span> out</span></div></div>' +
       '<div class="card"><h2>By purpose</h2>' + purposes + '</div>' +
@@ -607,6 +609,10 @@ input, select {
 
   function viewAdd() {
     var f = ui.form, accs = state.accounts;
+    if (!accs.length) {
+      return '<div class="card"><b>No bank accounts yet</b><p class="muted" style="margin:6px 0 0">Add an account first, then you can record deposits, withdrawals and transfers.</p>' +
+        '<button class="btn primary block" data-action="tab" data-tab="settings">Add an account</button></div>';
+    }
     if (!byId(f.acc)) f.acc = accs[0].id;
     if (f.type === 'transfer' && (!byId(f.to) || f.to === f.acc)) {
       var other = accs.filter(function (a) { return a.id !== f.acc; })[0];
@@ -642,19 +648,55 @@ input, select {
       '<button class="btn primary block" type="submit">Save transaction</button></form>';
   }
 
-  function viewHistory() {
-    var list = sortedTx().filter(function (t) {
-      return !ui.filter || t.acc === ui.filter || t.to === ui.filter;
+  var MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  function monthLabel(ym) {
+    var m = /^(\d{4})-(\d{2})$/.exec(ym);
+    return m ? MONTHS_FULL[parseInt(m[2], 10) - 1] + ' ' + m[1] : ym;
+  }
+
+  function monthOptions(selected) {
+    var cur = todayStr().slice(0, 7), seen = {}, list = [cur];
+    seen[cur] = true;
+    state.tx.forEach(function (t) {
+      var k = String(t.date).slice(0, 7);
+      if (!seen[k]) { seen[k] = true; list.push(k); }
     });
+    list.sort().reverse();
+    return '<option value="all"' + (selected === 'all' ? ' selected' : '') + '>All months</option>' +
+      list.map(function (k) {
+        return '<option value="' + esc(k) + '"' + (k === selected ? ' selected' : '') + '>' + esc(monthLabel(k)) + '</option>';
+      }).join('');
+  }
+
+  function viewHistory() {
+    if (!ui.month) ui.month = todayStr().slice(0, 7);
+    var list = sortedTx().filter(function (t) {
+      if (ui.filter && t.acc !== ui.filter && t.to !== ui.filter) return false;
+      if (ui.month !== 'all' && String(t.date).slice(0, 7) !== ui.month) return false;
+      return true;
+    });
+    var inn = 0, out = 0;
+    list.forEach(function (t) {
+      if (t.type === 'deposit') inn += t.amt;
+      else if (t.type === 'withdraw') out += t.amt;
+    });
+    var net = inn - out;
+    var cls = net < 0 ? 'neg' : (net > 0 ? 'pos' : '');
+    var summary = '<div class="card total"><div class="muted">Ending balance' + (ui.month === 'all' ? '' : ' · ' + esc(monthLabel(ui.month))) + '</div>' +
+      '<div class="big ' + cls + '">' + money(net) + '</div>' +
+      '<div class="muted"><span class="nw"><span class="pos">+' + money(inn) + '</span> in</span> · <span class="nw"><span class="neg">−' + money(out) + '</span> out</span></div></div>';
+
     var shown = list.slice(0, ui.shown);
-    var filter = '<label for="hfilter" style="margin-top:0">Show</label><select id="hfilter">' +
+    var filter = '<label for="hmonth" style="margin-top:0">Month</label><select id="hmonth">' + monthOptions(ui.month) + '</select>' +
+      '<label for="hfilter">Account</label><select id="hfilter">' +
       '<option value="">All accounts</option>' + accountOptions(ui.filter) + '</select>';
     var rows = shown.length ?
       shown.map(function (t) { return txRow(t, true); }).join('') :
-      '<div class="empty">Nothing here yet.</div>';
+      '<div class="empty">No transactions for this selection.</div>';
     var more = list.length > shown.length ?
       '<button class="btn block" data-action="more">Show more</button>' : '';
-    return '<div class="card">' + filter + '</div><div class="card">' + rows + more + '</div>';
+    return '<div class="card">' + filter + '</div>' + summary + '<div class="card">' + rows + more + '</div>';
   }
 
   function viewSettings() {
@@ -749,7 +791,12 @@ input, select {
       return a.number === num && a.name.toLowerCase() === name.toLowerCase();
     });
     if (dup) return err('That account is already added.');
-    state.accounts.push({ id: uid(), name: name, number: num, opening: open });
+    var first = state.accounts.length === 0;
+    var acct = { id: uid(), name: name, number: num, opening: open };
+    state.accounts.push(acct);
+    if (first && state.onboarded) {
+      ROLES.forEach(function (r) { if (!state.roles[r.id]) state.roles[r.id] = acct.id; });
+    }
     save();
     render(true);
     toast('Account added');
@@ -911,15 +958,24 @@ input, select {
     }).catch(function () { ui.remExact = 'granted'; });
   }
 
-  // Schedules (or cancels) the repeating daily alarm. Android keeps it, restores it after a restart,
-  // and fires it even when FundTrail is closed.
+  // Android can silently drop a repeating alarm if the app is left unopened for days.
+  // So we schedule the next 60 reminders as separate one-off alarms, and top them up
+  // every time FundTrail is opened or brought back to the screen.
+  var REM_DAYS = 60;
+
+  function remIds() {
+    var a = [];
+    for (var i = 0; i < REM_DAYS; i++) a.push({ id: REM_ID + i });
+    return a;
+  }
+
   function remApply(ask) {
     var ln = lnPlugin();
     if (!ln) return Promise.resolve();
     var r = state.reminder;
     if (!r.on) {
       ui.remStatus = 'off';
-      return ln.cancel({ notifications: [{ id: REM_ID }] }).catch(function () {});
+      return ln.cancel({ notifications: remIds() }).catch(function () {});
     }
     return remEnsurePermission(ln, ask).then(function (ok) {
       if (!ok) { ui.remStatus = 'denied'; return; }
@@ -927,12 +983,18 @@ input, select {
         id: REM_CHANNEL, name: 'Daily reminder', description: 'Reminds you to record the day’s transactions',
         importance: 4, visibility: 1
       }).catch(function () {})
-        .then(function () { return ln.cancel({ notifications: [{ id: REM_ID }] }); })
+        .then(function () { return ln.cancel({ notifications: remIds() }).catch(function () {}); })
         .then(function () {
-          return ln.schedule({ notifications: [{
-            id: REM_ID, title: REM_TITLE, body: REM_BODY, channelId: REM_CHANNEL,
-            schedule: { on: { hour: r.h, minute: r.m }, allowWhileIdle: true }
-          }] });
+          var now = new Date(), list = [];
+          for (var i = 0; i < REM_DAYS; i++) {
+            var when = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, r.h, r.m, 0, 0);
+            if (when.getTime() <= now.getTime() + 5000) continue;
+            list.push({
+              id: REM_ID + i, title: REM_TITLE, body: REM_BODY, channelId: REM_CHANNEL,
+              schedule: { at: when, allowWhileIdle: true }
+            });
+          }
+          return list.length ? ln.schedule({ notifications: list }) : null;
         })
         .then(function () { ui.remStatus = 'on'; return remCheckExact(ln); });
     }).catch(function () { ui.remStatus = 'error'; });
@@ -952,7 +1014,7 @@ input, select {
     if (!r.on) msg = 'The reminder is off.';
     else if (st === 'denied') msg = 'Notifications are blocked. Turn them on for FundTrail in your phone’s Settings → Apps → FundTrail → Notifications, then come back here.';
     else if (st === 'error') msg = 'Could not set the reminder. Try changing the time or turning it off and on.';
-    else msg = 'FundTrail will remind you at ' + remTime() + ' every day, even when the app is closed.';
+    else msg = 'FundTrail will remind you at ' + remTime() + ' every day.';
     var exact = (r.on && st === 'on' && ui.remExact === 'denied') ?
       '<p class="muted">For the reminder to arrive exactly on time, allow exact alarms for FundTrail.</p>' +
       '<button class="btn block" data-action="remExact">Allow exact timing</button>' : '';
@@ -984,7 +1046,14 @@ input, select {
 
     switch (act) {
       case 'next':
-        if (state.step === 1 && !state.accounts.length) return;
+        if (state.step === 1 && !state.accounts.length) {
+          state.onboarded = true;
+          state.step = 2;
+          ui.tab = 'home';
+          save(); requestPersist(); render(false);
+          remApply(true).then(function () { if (ui.tab === 'settings') render(true); });
+          return;
+        }
         if (state.step === 1 && state.accounts.length === 1) {
           ROLES.forEach(function (r) { state.roles[r.id] = state.accounts[0].id; });
         }
@@ -1007,6 +1076,7 @@ input, select {
       case 'tab':
         ui.tab = el.getAttribute('data-tab');
         ui.editId = null;
+        if (ui.tab === 'history') ui.month = todayStr().slice(0, 7);
         ui.shown = 30;
         render(false);
         break;
@@ -1064,6 +1134,10 @@ input, select {
       if (t.value) state.roles[role] = t.value; else delete state.roles[role];
       save();
       if (!state.onboarded) render(true); else toast('Saved');
+    } else if (t.id === 'hmonth') {
+      ui.month = t.value;
+      ui.shown = 30;
+      render(true);
     } else if (t.id === 'hfilter') {
       ui.filter = t.value;
       ui.shown = 30;
