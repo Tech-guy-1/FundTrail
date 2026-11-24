@@ -97,10 +97,26 @@ with open(os.path.join(drawable, 'ic_stat_fundtrail.xml'), 'w') as f:
 mp = os.path.join(ROOT, 'android', 'app', 'src', 'main', 'AndroidManifest.xml')
 with open(mp) as f:
     m = f.read()
-perm = '<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />'
-if perm not in m:
-    m = m.replace('</manifest>', '    ' + perm + '\n</manifest>')
-    with open(mp, 'w') as f:
-        f.write(m)
+# USE_EXACT_ALARM is granted automatically on Android 13+, so the reminder fires on the minute
+# without the user having to switch anything on. SCHEDULE_EXACT_ALARM covers Android 12.
+for perm in ('<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />',
+             '<uses-permission android:name="android.permission.USE_EXACT_ALARM" />'):
+    if perm not in m:
+        m = m.replace('</manifest>', '    ' + perm + '\n</manifest>')
+with open(mp, 'w') as f:
+    f.write(m)
+
+# Make the app fill the whole screen: draw into the camera-notch area and colour the status bar.
+import re
+sp = os.path.join(RES, 'values', 'styles.xml')
+if os.path.exists(sp):
+    with open(sp) as f:
+        s = f.read()
+    extra = ('\n        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>'
+             '\n        <item name="android:statusBarColor">@color/colorPrimaryDark</item>')
+    if 'windowLayoutInDisplayCutoutMode' not in s:
+        s = re.sub(r'(<style name="AppTheme\.NoActionBar"[^>]*>)', lambda mo: mo.group(1) + extra, s, count=1)
+        with open(sp, 'w') as f:
+            f.write(s)
 
 print('Branding applied (%d splash images replaced).' % count)
