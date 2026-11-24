@@ -59,7 +59,8 @@ body { overflow: hidden; }
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
-  max-width: 480px;
+  width: 100%;
+  max-width: 640px;
   margin: 0 auto;
   padding-top: env(safe-area-inset-top);
   background: var(--bg);
@@ -191,6 +192,30 @@ input, select {
   font-size: 14px; text-align: center; display: none; z-index: 10;
 }
 .toast.show { display: block; }
+
+/* Financial wrap */
+.wraphero { background: var(--brand); color: var(--on-brand); border-radius: var(--radius); padding: 18px 16px; margin-bottom: 12px; }
+.wraphero h1 { margin: 0 0 2px; font-size: 24px; }
+.wraphero p { margin: 0; opacity: .9; font-size: 14px; }
+.wrapnum { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.wrapnum div { flex: 1; min-width: 0; }
+.wrapnum small { display: block; color: var(--muted); font-size: 12px; }
+.wrapnum b { display: block; font-size: 16px; overflow-wrap: anywhere; }
+.mchart { display: flex; gap: 4px; align-items: flex-end; height: 110px; margin-top: 10px; }
+.mcol { flex: 1; height: 100%; display: flex; gap: 1px; align-items: flex-end; }
+.mb { flex: 1; border-radius: 3px 3px 0 0; min-height: 2px; }
+.mb.i { background: var(--pos); }
+.mb.o { background: var(--neg); }
+.mlab { display: flex; gap: 4px; margin-top: 4px; font-size: 11px; color: var(--muted); text-align: center; }
+.mlab span { flex: 1; }
+.pitem { padding: 8px 0; border-top: 1px solid var(--line); }
+.pitem:first-of-type { border-top: 0; }
+.pitem .pt { display: flex; justify-content: space-between; gap: 10px; }
+.pitem .pt b { min-width: 0; overflow-wrap: anywhere; }
+.pitem .pt span { flex: none; font-weight: 700; }
+.pbar { height: 8px; background: var(--line); border-radius: 4px; margin-top: 6px; overflow: hidden; }
+.pbar i { display: block; height: 100%; background: var(--brand); border-radius: 4px; }
+.pbar.red i { background: var(--neg); }
 
 @media (max-width: 340px) {
   .top { font-size: 20px; }
@@ -632,7 +657,11 @@ input, select {
     var noAcc = state.accounts.length ? '' :
       '<div class="card"><b>No bank accounts yet</b><p class="muted" style="margin:6px 0 0">Add your first account to start recording transactions.</p>' +
       '<button class="btn primary block" data-action="tab" data-tab="settings">Add an account</button></div>';
-    return noAcc + '<div class="card total"><div class="muted">Total balance</div>' +
+    var wy = wrapYear();
+    var wrapCard = wy ? '<div class="card"><b>Your ' + wy + ' financial wrap is ready</b>' +
+      '<p class="muted" style="margin:6px 0 0">See how your year went, from January to December.</p>' +
+      '<button class="btn primary block" data-action="openWrap">View my ' + wy + ' wrap</button></div>' : '';
+    return noAcc + wrapCard + '<div class="card total"><div class="muted">Total balance</div>' +
       '<div class="big">' + money(total) + '</div>' +
       '<div class="muted">This month: <span class="nw"><span class="pos">+' + money(inn) + '</span> in</span> · <span class="nw"><span class="neg">−' + money(out) + '</span> out</span></div></div>' +
       '<div class="card"><h2>By purpose</h2>' + purposes + '</div>' +
@@ -672,7 +701,7 @@ input, select {
       '<div class="fld"><label for="f-amt">Amount (MK)</label>' +
       '<input id="f-amt" inputmode="decimal" autocomplete="off" placeholder="0.00" value="' + esc(f.amt) + '"></div>' +
       '<div class="fld"><label for="f-date">Date</label>' +
-      '<input id="f-date" type="date" value="' + esc(f.date) + '"></div>' +
+      '<input id="f-date" type="date" max="' + todayStr() + '" value="' + esc(f.date) + '"></div>' +
       '<div class="fld"><label for="f-note">Note (optional)</label>' +
       '<input id="f-note" maxlength="60" autocomplete="off" placeholder="e.g. Salary, school fees" value="' + esc(f.note) + '"></div>' +
       '</div>' +
@@ -776,7 +805,108 @@ input, select {
       '<p class="muted" style="text-align:center">FundTrail 1.0 · works offline · <span class="nw">Developed by MISIAS</span></p>';
   }
 
+
+  /* ---------- financial wrap (20-29 December) ---------- */
+
+  // The wrap is on show from 20 December for 10 days (20th to 29th).
+  function wrapYear() {
+    var d = new Date();
+    return (d.getMonth() === 11 && d.getDate() >= 20 && d.getDate() <= 29) ? d.getFullYear() : null;
+  }
+
+  function pct(part, whole) {
+    return whole > 0 ? Math.round(part / whole * 100) : 0;
+  }
+
+  function pitem(title, sub, amount, p, red) {
+    return '<div class="pitem"><div class="pt"><b>' + esc(title) + '</b><span>' + amount + ' · ' + p + '%</span></div>' +
+      (sub ? '<div class="muted wrap" style="font-size:12px">' + esc(sub) + '</div>' : '') +
+      '<div class="pbar' + (red ? ' red' : '') + '"><i style="width:' + Math.max(p, 2) + '%"></i></div></div>';
+  }
+
+  function wrapData(year) {
+    var y = String(year), inM = [], outM = [], i;
+    for (i = 0; i < 12; i++) { inM.push(0); outM.push(0); }
+    var inn = 0, out = 0, byNote = {}, byAcc = {}, count = 0;
+    state.tx.forEach(function (t) {
+      if (String(t.date).slice(0, 4) !== y) return;
+      var mi = parseInt(String(t.date).slice(5, 7), 10) - 1;
+      if (mi < 0 || mi > 11) return;
+      if (t.type === 'deposit') { inn += t.amt; inM[mi] += t.amt; count++; }
+      else if (t.type === 'withdraw') {
+        out += t.amt; outM[mi] += t.amt; count++;
+        var key = (t.note || '').trim().toLowerCase() || '(no note)';
+        if (!byNote[key]) byNote[key] = { label: (t.note || '').trim() || 'No note', amt: 0 };
+        byNote[key].amt += t.amt;
+        byAcc[t.acc] = (byAcc[t.acc] || 0) + t.amt;
+      } else count++;
+    });
+    return { inn: inn, out: out, inM: inM, outM: outM, count: count,
+      notes: Object.keys(byNote).map(function (k) { return byNote[k]; }).sort(function (a, b) { return b.amt - a.amt; }).slice(0, 5),
+      accs: byAcc };
+  }
+
+  function purposeText(accId) {
+    var l = ROLES.filter(function (r) { return state.roles[r.id] === accId; }).map(function (r) { return r.label; });
+    return l.join(', ');
+  }
+
+  function viewWrap() {
+    var year = wrapYear() || new Date().getFullYear();
+    var w = wrapData(year);
+    var net = w.inn - w.out;
+    var maxM = Math.max.apply(null, w.inM.concat(w.outM).concat([1]));
+    var chart = '<div class="mchart">' + w.inM.map(function (v, i) {
+      return '<div class="mcol"><div class="mb i" style="height:' + Math.round(v / maxM * 100) + '%"></div>' +
+        '<div class="mb o" style="height:' + Math.round(w.outM[i] / maxM * 100) + '%"></div></div>';
+    }).join('') + '</div><div class="mlab">' + 'JFMAMJJASOND'.split('').map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' +
+      '<p class="muted" style="margin:8px 0 0;font-size:12px"><span class="pos">■</span> Money in &nbsp; <span class="neg">■</span> Money out</p>';
+
+    var topNotes = w.notes.length ? w.notes.map(function (n) {
+      return pitem(n.label, '', money(n.amt), pct(n.amt, w.out), true);
+    }).join('') : '<div class="empty">No withdrawals recorded this year.</div>';
+
+    var accList = state.accounts.map(function (a) { return { a: a, v: w.accs[a.id] || 0 }; })
+      .filter(function (x) { return x.v > 0; }).sort(function (x, y) { return y.v - x.v; });
+    var fromAcc = accList.length ? accList.map(function (x) {
+      return pitem(x.a.name, purposeText(x.a.id), money(x.v), pct(x.v, w.out), true);
+    }).join('') : '<div class="empty">Nothing spent yet.</div>';
+
+    var b = balances(), totalPos = 0;
+    state.accounts.forEach(function (a) { if (b[a.id] > 0) totalPos += b[a.id]; });
+    var assetList = state.accounts.filter(function (a) { return b[a.id] > 0; })
+      .sort(function (x, y) { return b[y.id] - b[x.id]; })
+      .map(function (a) { return pitem(a.name, purposeText(a.id), money(b[a.id]), pct(b[a.id], totalPos), false); }).join('') ||
+      '<div class="empty">No money in your accounts right now.</div>';
+    var nwv = netWorth('all');
+    var nwCls = nwv.net < 0 ? 'neg' : (nwv.net > 0 ? 'pos' : '');
+
+    return '<section class="screen"><div class="top">Your ' + year + ' wrap</div><div class="content">' +
+      '<div class="wraphero"><h1>' + year + ' in money</h1><p>January to December · ' + w.count + ' transactions recorded</p></div>' +
+      '<div class="card"><h2>The year</h2><div class="wrapnum">' +
+      '<div><small>Money in</small><b class="pos">' + money(w.inn) + '</b></div>' +
+      '<div><small>Money out</small><b class="neg">' + money(w.out) + '</b></div>' +
+      '<div><small>Difference</small><b class="' + (net < 0 ? 'neg' : (net > 0 ? 'pos' : '')) + '">' + money(net) + '</b></div></div>' + chart + '</div>' +
+      '<div class="card"><h2>What you spent the most on</h2>' + topNotes + '</div>' +
+      '<div class="card"><h2>Where it was spent from</h2>' + fromAcc + '</div>' +
+      '<div class="card"><h2>Your assets now</h2>' + assetList +
+      '<div class="wrapnum" style="margin-top:12px"><div><small>Net worth</small><b class="' + nwCls + '">' + money(nwv.net) + '</b></div></div></div>' +
+      '<p class="muted" style="text-align:center;font-size:12px">This wrap stays until 29 December. You can open it again from Home.</p>' +
+      '</div><div class="foot"><button class="btn primary block" style="margin:0" data-action="closeWrap">Close</button></div></section>';
+  }
+
+  // Opens the wrap on its own the first time the app is opened during the window.
+  function wrapAutoOpen() {
+    var y = wrapYear();
+    if (!y || !state || !state.onboarded || state.wrapSeen === y) return false;
+    state.wrapSeen = y;
+    ui.wrap = true;
+    save();
+    return true;
+  }
+
   function viewMain() {
+    if (ui.wrap) return viewWrap();
     var titles = { home: 'FundTrail', add: 'Add transaction', history: 'History', settings: 'Settings' };
     var body = ui.tab === 'add' ? viewAdd() : ui.tab === 'history' ? viewHistory() :
       ui.tab === 'settings' ? viewSettings() : viewHome();
@@ -881,6 +1011,7 @@ input, select {
     if (amt === null || amt <= 0) return err('Enter a valid amount, like 25000 or 1500.50.');
     if (amt > MAX_AMT) return err('That amount is too large.');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(f.date)) return err('Choose a date.');
+    if (f.date > todayStr()) return err('The date cannot be later than today.');
     var from = byId(f.acc);
     if (!from) return err('Choose an account.');
     if (f.type === 'transfer') {
@@ -967,7 +1098,7 @@ input, select {
   /* ---------- daily reminder (native Android only) ---------- */
 
   var REM_ID = 1701;
-  var REM_CHANNEL = 'daily-reminder';
+  var REM_CHANNEL = 'daily-reminder-v2';
   var REM_TITLE = 'FundTrail';
   var REM_BODY = 'Time to record today’s expenses and transactions.';
 
@@ -1017,10 +1148,13 @@ input, select {
     }
     return remEnsurePermission(ln, ask).then(function (ok) {
       if (!ok) { ui.remStatus = 'denied'; return; }
-      return ln.createChannel({
-        id: REM_CHANNEL, name: 'Daily reminder', description: 'Reminds you to record the day’s transactions',
-        importance: 4, visibility: 1
-      }).catch(function () {})
+      return (ln.deleteChannel ? ln.deleteChannel({ id: 'daily-reminder' }).catch(function () {}) : Promise.resolve())
+        .then(function () {
+          return ln.createChannel({
+            id: REM_CHANNEL, name: 'Daily reminder', description: 'Reminds you to record the day’s transactions',
+            importance: 5, visibility: 1
+          });
+        }).catch(function () {})
         .then(function () { return ln.cancel({ notifications: remIds() }).catch(function () {}); })
         .then(function () {
           var now = new Date(), list = [];
@@ -1066,6 +1200,7 @@ input, select {
   }
 
   document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && state && state.onboarded && wrapAutoOpen()) render(false);
     if (document.visibilityState !== 'visible' || !state || !state.onboarded || !lnPlugin()) return;
     var before = ui.remStatus + '|' + ui.remExact;
     remApply(false).then(function () {
@@ -1110,6 +1245,12 @@ input, select {
         state.onboarded = true;
         ui.tab = 'home';
         save(); requestPersist(); render(false); remApply(true).then(function () { if (ui.tab === 'settings') render(true); });
+        break;
+      case 'openWrap':
+        ui.wrap = true; render(false);
+        break;
+      case 'closeWrap':
+        ui.wrap = false; render(false);
         break;
       case 'tab':
         ui.tab = el.getAttribute('data-tab');
@@ -1203,6 +1344,7 @@ input, select {
     ui.form.date = todayStr();
     load().then(function (s) {
       state = s && validState(s) ? normalize(s) : newState();
+      wrapAutoOpen();
       render(false);
       requestPersist();
       if (state.onboarded) remApply(false);
